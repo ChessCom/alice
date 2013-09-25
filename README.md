@@ -89,6 +89,17 @@ $persister->persist($objects);
 > class instead. These PHP files must return an array containing the same
 > structure as the yaml files have.
 
+### Forward Referencing ###
+
+`Nelmio\Alice\Loader\Base` (and any loaders extended from it) supports
+the `enableForwardReferences()` method.  This enables caching of
+fixtures with unmet references so that they might be filled in on
+future calls to `load()`.
+
+Since an excpetion will no longer be thrown on unmet references, you
+will need to call `getIncompleteInstances()` at the end of your
+fixture loading run to see if you have any such fixtures.
+
 ## Reference ##
 
 ### Creating Fixtures ###
