@@ -104,7 +104,14 @@ fixture loading run to see if you have any such fixtures.
 
 When using this feature you might get an error such as:
 
-> PHP Fatal error:  Uncaught exception 'Doctrine\ORM\ORMInvalidArgumentException' with message 'A new entity was found through the relationship Category#lastTopic' that was not configured to cascade persist operations for entity: Topic@000000007b4773eb0000000033768373. To solve this issue: Either explicitly call EntityManager#persist() on this unknown entity or configure cascade persist  this association in the mapping for example @ManyToOne(..,cascade={"persist"}). If you cannot find out which entity causes the problem implement Topic#__toString()' to get a clue.' in /www/vendor/doctrine/orm/lib/Doctrine/ORM/ORMInvalidArgumentException.php:59
+```
+PHP Fatal error:  Uncaught exception 'Doctrine\ORM\ORMInvalidArgumentException' with message 'A new entity was found
+through the relationship Category#lastTopic' that was not configured to cascade persist operations for entity:
+Topic@000000007b4773eb0000000033768373. To solve this issue: Either explicitly call EntityManager#persist() on this
+unknown entity or configure cascade persist  this association in the mapping for example
+@ManyToOne(..,cascade={"persist"}). If you cannot find out which entity causes the problem implement
+Topic#__toString()' to get a clue.' in /www/vendor/doctrine/orm/lib/Doctrine/ORM/ORMInvalidArgumentException.php:59
+```
 
 This means that you are trying to persist a set of objects and one of
 them references an object that has unmet references.  This might
