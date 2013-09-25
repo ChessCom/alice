@@ -96,7 +96,7 @@ the `enableForwardReferences()` method.  This enables caching of
 fixtures with unmet references so that they might be filled in on
 future calls to `load()`.
 
-Since an excpetion will no longer be thrown on unmet references, you
+Since an exception will no longer be thrown on unmet references, you
 will need to call `getIncompleteInstances()` at the end of your
 fixture loading run to see if you have any such fixtures.
 
