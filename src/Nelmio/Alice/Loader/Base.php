@@ -193,6 +193,7 @@ class Base implements LoaderInterface
                     throw $e;
                 }
 
+                $instanceData[] = $e;
                 $this->incompleteInstances[] = $instanceData;
             }
         }
