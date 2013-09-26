@@ -615,6 +615,29 @@ class BaseTest extends \PHPUnit_Framework_TestCase
             ),
         ));
 
+        $this->verifyIdentityProviderResults($res);
+    }
+
+    public function testDefaultIdentityProviderSugar()
+    {
+        $res = $this->loadData(array(
+            self::USER => array(
+                'user1' => array(
+                    'username' => 'testuser',
+                    'fullname' => '<($username)>',
+                ),
+                'user2' => array(
+                    'username' => 'test_user',
+                    'fullname' => '<(str_replace("_", " ", $username))>',
+                ),
+            ),
+        ));
+
+        $this->verifyIdentityProviderResults($res);
+    }
+
+    protected function verifyIdentityProviderResults($res)
+    {
         $this->assertCount(2, $res);
 
         $user1 = $this->loader->getReference('user1');
