@@ -600,6 +600,32 @@ class BaseTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($category1, $topic1->parentCategory);
     }
 
+    public function testIdentityProvider()
+    {
+        $res = $this->loadData(array(
+            self::USER => array(
+                'user1' => array(
+                    'username' => 'testuser',
+                    'fullname' => '<identity($username)>',
+                ),
+                'user2' => array(
+                    'username' => 'test_user',
+                    'fullname' => '<identity(str_replace("_", " ", $username))>',
+                ),
+            ),
+        ));
+
+        $this->assertCount(2, $res);
+
+        $user1 = $this->loader->getReference('user1');
+        $this->assertInstanceOf(self::USER, $user1);
+        $this->assertEquals('testuser', $user1->fullname);
+
+        $user2 = $this->loader->getReference('user2');
+        $this->assertInstanceOf(self::USER, $user2);
+        $this->assertEquals('test user', $user2->fullname);
+    }
+
     public function testLoadCreatesEnumsOfObjects()
     {
         $res = $this->loadData(array(
