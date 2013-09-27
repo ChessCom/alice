@@ -333,6 +333,7 @@ class Base implements LoaderInterface
     private function populateObject($instance, $class, $name, $data)
     {
         $variables = array('this' => $instance);
+        $this->references['self'] = $instance;
         foreach ($data as $key => $val) {
             list($key, $flags) = $this->parseFlags($key);
             if (is_array($val) && '{' === key($val)) {
@@ -390,6 +391,9 @@ class Base implements LoaderInterface
                 throw new \UnexpectedValueException('Could not determine how to assign '.$key.' to a '.$class.' object');
             }
         }
+
+        $this->references['self'] = null;
+        unset($this->references['self']);
     }
 
     private function createInstance($class, $name, array &$data)

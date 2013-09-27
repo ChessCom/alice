@@ -673,6 +673,29 @@ class BaseTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($user1->username, $user2->username);
     }
 
+    public function testSelfReference()
+    {
+        $res = $this->loadData(array(
+            self::USER => array(
+                'user{1..2}' => array(
+                    'username' => 'testuser<current()>',
+                    'fullname' => '<(ucfirst(substr(@self->username, 0, 4)) . " User " . substr(@self->username, -1))>',
+                ),
+            ),
+        ));
+
+        $this->assertCount(2, $res);
+
+        $user1 = $this->loader->getReference('user1');
+        $this->assertInstanceOf(self::USER, $user1);
+
+        $user2 = $this->loader->getReference('user2');
+        $this->assertInstanceOf(self::USER, $user2);
+
+        $this->assertEquals('Test User 1', $user1->fullname);
+        $this->assertEquals('Test User 2', $user2->fullname);
+    }
+
     public function testLoadCreatesEnumsOfObjects()
     {
         $res = $this->loadData(array(

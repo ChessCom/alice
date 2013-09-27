@@ -437,6 +437,10 @@ Nelmio\Entity\Group:
         owner: <numberBetween(@group1->owner, 200)>
 ```
 
+#### Self reference ####
+
+The `@self` reference is assigned to the current fixture instance.
+
 ### Handling Unique Constraints ###
 
 Quite often some database fields have a unique constraint set on them, in which
