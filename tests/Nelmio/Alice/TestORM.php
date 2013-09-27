@@ -14,15 +14,37 @@ namespace Nelmio\Alice;
 class TestORM implements ORMinterface
 {
     protected $objects;
+    protected $currentId;
 
     public function persist(array $objects)
     {
-        $this->objects = $objects;
+        foreach ($objects as $object) {
+            $this->setObjectId($object, ++$this->currentId);
+            $this->objects[] = $object;
+        }
     }
 
     public function getObjects()
     {
         return $this->objects;
+    }
+
+    protected function getObjectId($object)
+    {
+        if (property_exists($object, 'id')) {
+            return $object->id;
+        } elseif (methodExists($object, 'getId')) {
+            return $object->getId();
+        }
+    }
+
+    protected function setObjectId($object, $id)
+    {
+        if (property_exists($object, 'id')) {
+            $object->id = $id;
+        } elseif (methodExists($object, 'setId')) {
+            $object->setId($id);
+        }
     }
 
     /**
@@ -32,6 +54,12 @@ class TestORM implements ORMinterface
      */
     public function find($class, $id)
     {
+        foreach ($this->objects as $object) {
+            if ($this->getObjectId($object) == $id) {
+                return $object;
+            }
+        }
+
         return null;
     }
 }

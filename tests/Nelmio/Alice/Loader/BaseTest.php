@@ -696,6 +696,39 @@ class BaseTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('Test User 2', $user2->fullname);
     }
 
+    public function testSameFileIdReference()
+    {
+        $res = $this->loadData(array(
+            self::TOPIC => array(
+                'topic{1..2}' => array(
+                    'subject' => 'Subject <current()>',
+                    'parentTopicId' => '@topic1->id',
+                ),
+            ),
+        ));
+
+        $this->assertCount(2, $res);
+        $this->assertCount(2, $this->loader->getIncompleteInstances());
+
+        $topic1 = $this->loader->getReference('topic1');
+        $this->assertInstanceOf(self::TOPIC, $topic1);
+
+        $topic2 = $this->loader->getReference('topic2');
+        $this->assertInstanceOf(self::TOPIC, $topic2);
+
+        $this->orm->persist($res);
+
+        if (count($this->loader->getIncompleteInstances()) > 0) {
+            $this->loader->load();
+        }
+
+        $this->assertNotNull($topic1->id);
+        $this->assertNotNull($topic2->id);
+
+        $this->assertEquals($topic1->id, $topic1->parentTopicId);
+        $this->assertEquals($topic1->id, $topic2->parentTopicId);
+    }
+
     public function testLoadCreatesEnumsOfObjects()
     {
         $res = $this->loadData(array(
