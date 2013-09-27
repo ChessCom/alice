@@ -539,14 +539,23 @@ class Base implements LoaderInterface
                 return $that->fake($matches['name'], $matches['locale']);
             }
 
-            // replace references to other variables in the same object
-            $args = preg_replace_callback('{\{?\$([a-z0-9_]+)\}?}i', function ($match) use ($variables) {
-                if (isset($variables[$match[1]])) {
-                    return '$variables['.var_export($match[1], true).']';
-                }
+            // replace references to other variables in the same object as well as references to other fixtures
+            $args = preg_replace_callback(
+                '{\{?(?<type>[$@])(?<name>[a-z0-9_]+)\}?}i',
+                function ($match) use ($variables, $that) {
+                    switch ($match['type']) {
+                        case '@':
+                            return '$that->getReference('.var_export($match['name'], true).')';
+                        case '$':
+                            if (isset($variables[$match['name']])) {
+                                return '$variables['.var_export($match['name'], true).']';
+                            }
+                    }
 
-                return $match[0];
-            }, $args);
+                    return $match[0];
+                },
+                $args
+            );
 
             $locale = var_export($matches['locale'], true);
             $name = var_export($matches['name'], true);
