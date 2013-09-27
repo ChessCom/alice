@@ -498,10 +498,6 @@ Nelmio\Entity\Group:
 As you can see, we make sure that the update date is between the creation
 date and the current time, which ensure the data will look real enough.
 
-#### `$this` ####
-
-The variable `$this` is bound to the current fixture instance.
-
 ### Value Objects ###
 
 Sometimes you require value objects that are not persisted by an ORM, but
