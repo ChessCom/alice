@@ -48,6 +48,11 @@ class Base implements LoaderInterface
     /**
      * @var array
      */
+    protected $templates = array();
+
+    /**
+     * @var array
+     */
     protected $incompleteInstances = array();
 
     /**
@@ -178,7 +183,19 @@ class Base implements LoaderInterface
                     }
                 } else {
                     list($name, $instanceFlags) = $this->parseFlags($name);
-                    $instances[] = array($this->createInstance($class, $name, $spec), $class, $name, $spec, $classFlags, $instanceFlags, null);
+                    if (!empty($instanceFlags)) {
+                        foreach (array_keys($instanceFlags) as $flag) {
+                            if(preg_match('#^(extends)\s*(.+)$#', $flag, $match)) {
+                                $template = $this->templates[$match[2]];
+                                $spec = array_merge($template, $spec);
+                            }
+                        }
+                    }
+                    if (isset($instanceFlags['template'])) {
+                        $this->templates[$name] = $spec;
+                        continue;
+                    }
+                    $instances[$name] = array($this->createInstance($class, $name, $spec), $class, $name, $spec, $classFlags, $instanceFlags, null);
                 }
             }
         }

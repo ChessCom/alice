@@ -28,6 +28,7 @@ To use it in Symfony2 you may want to use the [hautelook/alice-bundle](https://g
   - [References](#references)
   - [Multiple References](#multiple-references)
   - [Handling Unique Constraints](#handling-unique-constraints)
+  - [Fixture Inheritance](#fixture-inheritance)
   - [Variables](#variables)
   - [Value Objects](#value-objects)
   - [Custom Faker Data Providers](#custom-faker-data-providers)
@@ -470,6 +471,43 @@ for that property. For example:
 Nelmio\Entity\User:
     user{1..10}:
         username (unique): <username()>
+```
+
+### Fixture inheritance ###
+
+In order to keep fixtures lean, base fixtures to extend from can be created to then
+*only* need to define less additional values in fixture definitions
+
+
+By declaring a fixture as a template using the `(template)` flag at the end, Alice
+will set value as a template for that file. Templates values are not persisted.
+
+Templates can also make use of inheritance, by extending from other templates,
+so that inheritance can be used in multiple levels. For example:
+
+```yaml
+Nelmio\Entity\User:
+    user_bare (template):
+        username: <username()>
+    user_full (template, extends user_bare):
+        name: <firstName()>
+        lastname: <lastName()>
+        city: <city()>
+```
+
+Templates can be extended on other fixtures by making use of the `(extends)` flag
+followed by the name of the template to extend.
+
+```yaml
+Nelmio\Entity\User:
+    user (template):
+        username: <username()>
+        age: <numberBetween(1, 20)>
+    user1 (extends user):
+        name: <firstName()>
+        lastname: <lastName()>
+        city: <city()>
+        age: <numberBetween(1, 50)>
 ```
 
 ### Variables ###
