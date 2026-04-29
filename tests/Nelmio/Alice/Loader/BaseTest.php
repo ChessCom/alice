@@ -441,6 +441,42 @@ class BaseTest extends TestCase
         $this->assertInstanceOf('DateTime', $res['group1']->getCreationDate());
     }
 
+    public function testLoadCoercesTimestampForConstructorDateTimeHints()
+    {
+        $res = $this->loadData(array(
+            self::USER => array(
+                'user0' => array(
+                    '__construct' => array(null, null, '1325721600'),
+                ),
+            ),
+        ));
+
+        $this->assertInstanceOf('DateTime', $res['user0']->birthDate);
+        $this->assertEquals('1325721600', $res['user0']->birthDate->format('U'));
+    }
+
+    public function testLoadFetchesScalarIdsForClassHints()
+    {
+        $owner = new User();
+        $orm = $this->getMockBuilder('Nelmio\Alice\ORMInterface')->getMock();
+        $orm->expects($this->once())
+            ->method('find')
+            ->with(self::USER, '42')
+            ->will($this->returnValue($owner));
+
+        $loader = $this->createLoader();
+        $loader->setORM($orm);
+        $res = $loader->load(array(
+            self::GROUP => array(
+                'group0' => array(
+                    'owner' => '42',
+                ),
+            ),
+        ));
+
+        $this->assertSame($owner, $res['group0']->getOwner());
+    }
+
     public function testLoadParsesFakerData()
     {
         $res = $this->loadData(array(

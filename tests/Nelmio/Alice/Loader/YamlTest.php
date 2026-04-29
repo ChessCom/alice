@@ -20,7 +20,6 @@ class YamlTest extends TestCase
         $file = __DIR__ . '/../fixtures/include.yml';
         $loader = new \Nelmio\Alice\Loader\Yaml();
         $reflMethod = new \ReflectionMethod($loader, 'parse');
-        $reflMethod->setAccessible(true);
         $data = $reflMethod->invoke($loader, $file);
         $expectedData = array(
             'Nelmio\\Alice\\fixtures\\Product' =>

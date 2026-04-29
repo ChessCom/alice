@@ -184,7 +184,6 @@ class FixturesTest extends TestCase
         }
 
         $prop = new \ReflectionProperty('\Nelmio\Alice\Fixtures', 'loaders');
-        $prop->setAccessible(true);
         $loaders = $prop->getValue();
 
         $this->assertEquals(12, count($loaders));
