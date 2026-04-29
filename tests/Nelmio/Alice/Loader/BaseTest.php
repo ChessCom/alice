@@ -79,12 +79,11 @@ class BaseTest extends TestCase
         $this->assertSame($user, $this->loader->getReference('bob'));
     }
 
-    /**
-     * @expectedException UnexpectedValueException
-     * @expectedExceptionMessage Reference foo is not defined
-     */
     public function testGetBadReference()
     {
+        $this->expectException('UnexpectedValueException');
+        $this->expectExceptionMessage('Reference foo is not defined');
+
         $res = $this->loadData(array(
             self::USER => array(
                 'bob' => array(),
@@ -245,12 +244,11 @@ class BaseTest extends TestCase
         $this->assertEquals($res['bob'], $res['user']->username);
     }
 
-    /**
-     * @expectedException UnexpectedValueException
-     * @expectedExceptionMessage Property doesnotexist is not defined for reference user1
-     */
     public function testLoadParsesPropertyReferencesDoesNotExist()
     {
+        $this->expectException('UnexpectedValueException');
+        $this->expectExceptionMessage('Property doesnotexist is not defined for reference user1');
+
         $res = $this->loadData(array(
             self::USER => array(
                 'user1' => array(
@@ -337,12 +335,11 @@ class BaseTest extends TestCase
         }
     }
 
-    /**
-     * @expectedException UnexpectedValueException
-     * @expectedExceptionMessage Reference mask "user*" did not match any existing reference, make sure the object is created after its references
-     */
     public function testLoadFailsMultiReferencesIfNoneMatch()
     {
+        $this->expectException('UnexpectedValueException');
+        $this->expectExceptionMessage('Reference mask "user*" did not match any existing reference, make sure the object is created after its references');
+
         $usernames = range('a', 'z');
         $data = array(
             self::GROUP => array(
@@ -458,11 +455,11 @@ class BaseTest extends TestCase
     public function testLoadFetchesScalarIdsForClassHints()
     {
         $owner = new User();
-        $orm = $this->getMockBuilder('Nelmio\Alice\ORMInterface')->getMock();
+        $orm = $this->createMock('Nelmio\Alice\ORMInterface');
         $orm->expects($this->once())
             ->method('find')
             ->with(self::USER, '42')
-            ->will($this->returnValue($owner));
+            ->willReturn($owner);
 
         $loader = $this->createLoader();
         $loader->setORM($orm);
@@ -502,7 +499,7 @@ class BaseTest extends TestCase
         ));
 
         $this->assertNotEquals('<firstName()> <lastName()>', $res['user0']->username);
-        $this->assertRegExp('{^[\w\']+ [\w\']+$}i', $res['user0']->username);
+        $this->assertMatchesRegularExpression('{^[\w\']+ [\w\']+$}i', $res['user0']->username);
     }
 
     public function testLoadParsesFakerDataWithArgs()
@@ -561,15 +558,14 @@ class BaseTest extends TestCase
             ),
         ));
 
-        $this->assertRegExp('{^\d{3} \d{3} \d{3}$}', $res['user0']->username);
+        $this->assertMatchesRegularExpression('{^\d{3} \d{3} \d{3}$}', $res['user0']->username);
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Unknown formatter "siren"
-     */
     public function testLoadParsesFakerDataUsesDefaultLocale()
     {
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('Unknown format "siren"');
+
         $res = $this->loadData(array(
             self::USER => array(
                 'user0' => array(
@@ -1020,12 +1016,11 @@ class BaseTest extends TestCase
         $this->assertSame($this->loader->getReference('user')->username, 'my_very_long_name');
     }
 
-    /**
-     * @expectedException \UnexpectedValueException
-     * @expectedExceptionMessage Template user_not_base is not defined
-     */
     public function testInheritedObjectDoesntExist()
     {
+        $this->expectException('\UnexpectedValueException');
+        $this->expectExceptionMessage('Template user_not_base is not defined');
+
         $res = $this->loadData(array(
             self::USER => array(
                 'user_base (template)' => array(
@@ -1079,12 +1074,11 @@ class BaseTest extends TestCase
         $this->assertSame($this->loader->getReference('user2')->favoriteNumber, 42);
     }
 
-    /**
-     * @expectedException \UnexpectedValueException
-     * @expectedExceptionMessage Cannot use <current()> out of fixtures ranges
-     */
     public function testCurrentProviderFailsOutOfRanges()
     {
+        $this->expectException('\UnexpectedValueException');
+        $this->expectExceptionMessage('Cannot use <current()> out of fixtures ranges');
+
         $res = $this->loadData(array(
             self::USER => array(
                 'user1' => array(
@@ -1094,12 +1088,11 @@ class BaseTest extends TestCase
         ));
     }
 
-    /**
-     * @expectedException \UnexpectedValueException
-     * @expectedExceptionMessage Could not determine how to assign inexistent to a Nelmio\Alice\fixtures\User object
-     */
     public function testArbitraryPropertyNamesFail()
     {
+        $this->expectException('\UnexpectedValueException');
+        $this->expectExceptionMessage('Could not determine how to assign inexistent to a Nelmio\Alice\fixtures\User object');
+
         $res = $this->loadData(array(
             self::USER => array(
                 'user1' => array(
@@ -1109,12 +1102,10 @@ class BaseTest extends TestCase
         ));
     }
 
-    /**
-     * @expectedException RuntimeException
-     * @expectedExceptionMessage
-     */
     public function testLoadFailsOnConstructorsWithRequiredArgs()
     {
+        $this->expectException('RuntimeException');
+
         $res = $this->loadData(array(
             self::CONTACT => array(
                 'contact' => array(
@@ -1186,11 +1177,9 @@ class BaseTest extends TestCase
         $this->assertSame('alice', $res['user']->username);
     }
 
-    /**
-     * @expectedException UnexpectedValueException
-     * @expectedExceptionMessage
-     */
     public function testLoadFailsOnInvalidStaticConstructor() {
+        $this->expectException('UnexpectedValueException');
+
         $res = $this->loadData(array(
             self::USER => array(
                 'user' => array(
@@ -1200,11 +1189,9 @@ class BaseTest extends TestCase
         ));
     }
 
-    /**
-     * @expectedException UnexpectedValueException
-     * @expectedExceptionMessage
-     */
     public function testLoadFailsOnScalarStaticConstructorArgs() {
+        $this->expectException('UnexpectedValueException');
+
         $res = $this->loadData(array(
             self::USER => array(
                 'user' => array(
@@ -1214,11 +1201,9 @@ class BaseTest extends TestCase
         ));
     }
 
-    /**
-     * @expectedException UnexpectedValueException
-     * @expectedExceptionMessage
-     */
     public function testLoadFailsIfStaticMethodDoesntReturnAnInstance() {
+        $this->expectException('UnexpectedValueException');
+
         $res = $this->loadData(array(
             self::USER => array(
                 'user' => array(
@@ -1327,11 +1312,10 @@ class BaseTest extends TestCase
         $this->assertEquals($usernames, array_unique($usernames));
     }
 
-    /**
-     * @expectedException \RuntimeException
-     */
     public function testUniqueValuesException()
     {
+        $this->expectException('\RuntimeException');
+
         $loader = new Base("en_US", array(new FakerProvider));
         $res = $loader->load(array(
             self::USER => array(
@@ -1395,12 +1379,11 @@ class BaseTest extends TestCase
         $this->assertEquals('foo set by custom setter', $loader->getReference('user')->test_variable);
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Setter customNonexistantSetter not found in object
-     */
     public function testCustomNonexistantSetFunction()
     {
+        $this->expectException('\RuntimeException');
+        $this->expectExceptionMessage('Setter customNonexistantSetter not found in object');
+
         $this->loadData(
             array(
                 self::USER => array(

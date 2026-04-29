@@ -48,9 +48,9 @@ class FixturesTest extends TestCase
 
     public function testThatNewLoaderIsCreatedForDifferingOptions()
     {
-        $om = $this->getMock('Doctrine\Persistence\ObjectManager');
+        $om = $this->createMock('Doctrine\Persistence\ObjectManager');
         $om->expects($this->any())
-            ->method('find')->will($this->returnValue(new User()));
+            ->method('find')->willReturn(new User());
 
         $optionsBatch = array(
             // default options
@@ -191,14 +191,12 @@ class FixturesTest extends TestCase
 
     public function testThatExceptionIsThrownForInvalidProvider()
     {
-        $om = $this->getMock('Doctrine\Persistence\ObjectManager');
+        $om = $this->createMock('Doctrine\Persistence\ObjectManager');
         $om->expects($this->any())
-            ->method('find')->will($this->returnValue(new User()));
+            ->method('find')->willReturn(new User());
 
-        $this->setExpectedException(
-            '\InvalidArgumentException',
-            'The provider should be a string or an object, got array instead'
-        );
+        $this->expectException('\InvalidArgumentException');
+        $this->expectExceptionMessage('The provider should be a string or an object, got array instead');
 
         Fixtures::load(
             __DIR__.'/fixtures/complete.yml',
@@ -270,12 +268,11 @@ class FixturesTest extends TestCase
         $this->assertEquals(42, $user->favoriteNumber);
     }
 
-    /**
-     * @expectedException \RuntimeException
-     */
     public function testLoadWithLogger()
     {
-        $om = $this->getMock('Doctrine\Persistence\ObjectManager');
+        $om = $this->createMock('Doctrine\Persistence\ObjectManager');
+
+        $this->expectException('\RuntimeException');
 
         $objects = Fixtures::load(__DIR__.'/fixtures/basic.php', $om, array(
             'logger' => 'not callable'
@@ -316,7 +313,7 @@ class FixturesTest extends TestCase
 
     protected function getDoctrineManagerMock($objects = null)
     {
-        $om = $this->getMock('Doctrine\Persistence\ObjectManager');
+        $om = $this->createMock('Doctrine\Persistence\ObjectManager');
 
         $om->expects($objects ? $this->exactly($objects) : $this->any())
             ->method('persist');
@@ -325,7 +322,7 @@ class FixturesTest extends TestCase
             ->method('flush');
 
         $om->expects($this->once())
-            ->method('find')->will($this->returnValue(new User()));
+            ->method('find')->willReturn(new User());
 
         return $om;
     }
