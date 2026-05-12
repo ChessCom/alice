@@ -515,7 +515,6 @@ class Base implements LoaderInterface
                     $generatedVal = $this->checkTypeHints($instance, 'set'.$key, $generatedVal);
                     if(!is_callable(array($instance, 'set'.$key))) {
                         $refl = new \ReflectionMethod($instance, 'set'.$key);
-                        $refl->setAccessible(true);
                         $refl->invoke($instance, $generatedVal);
                     } else {
                         $instance->{'set'.$key}($generatedVal);
@@ -523,7 +522,6 @@ class Base implements LoaderInterface
                     $variables[$key] = $generatedVal;
                 } elseif (property_exists($instance, $key)) {
                     $refl = new \ReflectionProperty($instance, $key);
-                    $refl->setAccessible(true);
                     $refl->setValue($instance, $generatedVal);
 
                     $variables[$key] = $generatedVal;
@@ -559,11 +557,11 @@ class Base implements LoaderInterface
         $reflection = new \ReflectionMethod($obj, $method);
         $params = $reflection->getParameters();
 
-        if (!$params[$pNum]->getClass()) {
+        $hintedClass = $this->getClassTypeName($params[$pNum]);
+
+        if (!$hintedClass) {
             return $value;
         }
-
-        $hintedClass = $params[$pNum]->getClass()->getName();
 
         if ($hintedClass === 'DateTime') {
             try {
@@ -585,6 +583,17 @@ class Base implements LoaderInterface
         }
 
         return $value;
+    }
+
+    private function getClassTypeName(\ReflectionParameter $parameter)
+    {
+        $type = $parameter->getType();
+
+        if (!$type instanceof \ReflectionNamedType || $type->isBuiltin()) {
+            return null;
+        }
+
+        return $type->getName();
     }
 
     private function process($data, array $variables)
