@@ -593,7 +593,19 @@ class Base implements LoaderInterface
             return null;
         }
 
-        return $type->getName();
+        $typeName = $type->getName();
+
+        if ('self' === strtolower($typeName)) {
+            return $parameter->getDeclaringClass()->getName();
+        }
+
+        if ('parent' === strtolower($typeName)) {
+            $parentClass = $parameter->getDeclaringClass()->getParentClass();
+
+            return $parentClass ? $parentClass->getName() : null;
+        }
+
+        return $typeName;
     }
 
     private function process($data, array $variables)

@@ -13,6 +13,7 @@ namespace Nelmio\Alice\Loader;
 
 use Nelmio\Alice\TestORM;
 use Nelmio\Alice\Loader\Base;
+use Nelmio\Alice\fixtures\Group;
 use Nelmio\Alice\fixtures\User;
 use PHPUnit\Framework\TestCase;
 
@@ -472,6 +473,28 @@ class BaseTest extends TestCase
         ));
 
         $this->assertSame($owner, $res['group0']->getOwner());
+    }
+
+    public function testLoadFetchesScalarIdsForSelfClassHints()
+    {
+        $relatedGroup = new Group();
+        $orm = $this->createMock('Nelmio\Alice\ORMInterface');
+        $orm->expects($this->once())
+            ->method('find')
+            ->with(self::GROUP, '42')
+            ->willReturn($relatedGroup);
+
+        $loader = $this->createLoader();
+        $loader->setORM($orm);
+        $res = $loader->load(array(
+            self::GROUP => array(
+                'group0' => array(
+                    'relatedGroup' => '42',
+                ),
+            ),
+        ));
+
+        $this->assertSame($relatedGroup, $res['group0']->getRelatedGroup());
     }
 
     public function testLoadParsesFakerData()
