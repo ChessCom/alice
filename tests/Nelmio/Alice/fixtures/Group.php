@@ -10,6 +10,7 @@ class Group
     private $members = array();
     private $creationDate;
     private $contactEmail;
+    private $relatedGroup;
     private $supportEmails = array();
     public $contactPerson;
     public $contactPersonName;
@@ -41,6 +42,16 @@ class Group
     public function setOwner(User $owner)
     {
         $this->owner = $owner;
+    }
+
+    public function getRelatedGroup()
+    {
+        return $this->relatedGroup;
+    }
+
+    public function setRelatedGroup(?self $relatedGroup = null)
+    {
+        $this->relatedGroup = $relatedGroup;
     }
 
     public function getMembers()
